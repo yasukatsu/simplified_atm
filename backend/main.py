@@ -13,6 +13,8 @@ app.config.from_object(__name__)
 
 CORS(app)
 
+
+
 # 任意のリクエストを受け取った時、index.htmlを参照
 
 
@@ -31,6 +33,13 @@ def random():
     }
     return jsonify(response)
 
+@app.route('/init')
+def init():
+    response = {
+        'accountId': randint(1, 100)
+    }
+    return jsonify(response)
+    
 
 # app.run(host, port)：hostとportを指定してflaskサーバを起動
 if __name__ == '__main__':

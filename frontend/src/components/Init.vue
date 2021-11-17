@@ -1,94 +1,35 @@
 <template>
-  <div class="hello">
+  <div class="init">
+    <h1>さぁ、口座を作ろう。</h1>
+    <el-row>
+      <el-button type="success" class="btn" @click="makeAccount">作る！</el-button>
+    </el-row>
     <h1>{{ msg }}</h1>
-    <h2>Essential Links</h2>
-    <ul>
-      <li>
-        <a
-          href="https://vuejs.org"
-          target="_blank"
-        >
-          Core Docs
-        </a>
-      </li>
-      <li>
-        <a
-          href="https://forum.vuejs.org"
-          target="_blank"
-        >
-          Forum
-        </a>
-      </li>
-      <li>
-        <a
-          href="https://chat.vuejs.org"
-          target="_blank"
-        >
-          Community Chat
-        </a>
-      </li>
-      <li>
-        <a
-          href="https://twitter.com/vuejs"
-          target="_blank"
-        >
-          Twitter
-        </a>
-      </li>
-      <br>
-      <li>
-        <a
-          href="http://vuejs-templates.github.io/webpack/"
-          target="_blank"
-        >
-          Docs for This Template
-        </a>
-      </li>
-    </ul>
-    <h2>Ecosystem</h2>
-    <ul>
-      <li>
-        <a
-          href="http://router.vuejs.org/"
-          target="_blank"
-        >
-          vue-router
-        </a>
-      </li>
-      <li>
-        <a
-          href="http://vuex.vuejs.org/"
-          target="_blank"
-        >
-          vuex
-        </a>
-      </li>
-      <li>
-        <a
-          href="http://vue-loader.vuejs.org/"
-          target="_blank"
-        >
-          vue-loader
-        </a>
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/awesome-vue"
-          target="_blank"
-        >
-          awesome-vue
-        </a>
-      </li>
-    </ul>
   </div>
 </template>
 
 <script>
+import axios from 'axios'
 export default {
   name: 'init',
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App'
+      msg: ''
+    }
+  },
+  methods: {
+    makeAccount () {
+      const path = 'http://localhost:5000/init'
+      axios.get(path)
+        .then(response => {
+          var accountId
+          accountId = response.data.accountId
+          this.msg = 'あなたの口座番号は' + accountId + 'です。'
+        })
+        .catch(error => {
+          console.log(error)
+          this.msg = '作成に失敗しました。。\n時間をおいて再度トライしてみてください。'
+        })
     }
   }
 }
@@ -99,15 +40,8 @@ export default {
 h1, h2 {
   font-weight: normal;
 }
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
+.btn {
+  margin: 20px;
+  transform: scale(2);
 }
 </style>
