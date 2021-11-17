@@ -24,7 +24,7 @@ export default {
         .then(response => {
           var accountId
           accountId = response.data.accountId
-          this.msg = 'あなたの口座番号は' + accountId + 'です。'
+          this.msg = 'あなたの口座番号は【 ' + accountId + ' 】です。'
         })
         .catch(error => {
           console.log(error)

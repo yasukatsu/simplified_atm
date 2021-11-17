@@ -2,6 +2,7 @@ from flask import Flask, render_template, jsonify
 # CORS：Ajax通信するためのライブラリ
 from flask_cors import CORS
 from random import *
+import sqlite3
 
 # static_folder：vueでビルドした静的ファイルのパスを指定
 # template_folder：vueでビルドしたindex.htmlのパスを指定
@@ -35,8 +36,36 @@ def random():
 
 @app.route('/init')
 def init():
+    # データベースを新規作成
+    dbname = ('./backend/models/atm.db')
+    conn = sqlite3.connect(dbname)
+
+    # テーブル作成
+    table = "atm"
+    cursor = conn.cursor()
+    sql = f"""CREATE TABLE IF NOT EXISTS {table}(
+        id integer primary key autoincrement,
+        amount integer
+    )"""
+    cursor.execute(sql)
+    conn.commit()
+
+    # レコードを格納
+    sql = f"INSERT INTO {table} (amount) VALUES (?)"
+    data = (0,)
+    cursor.execute(sql, data)
+    conn.commit()
+
+    # レコードを取得
+    sql = f"SELECT max(id) FROM {table}"
+    cursor.execute(sql)
+    latest_data = cursor.fetchall()
+    latest_id = latest_data[0]
+
+    conn.close()
+
     response = {
-        'accountId': randint(1, 100)
+        'accountId': latest_id
     }
     return jsonify(response)
     

@@ -11,4 +11,4 @@ front_build:
 	docker-compose exec vue npm run build --prefix ./frontend
 
 up:
-	docker-compose exec flask python backend/app.py
+	docker-compose exec flask python backend/main.py
