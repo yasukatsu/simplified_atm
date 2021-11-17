@@ -1,23 +1,40 @@
-version: '3'
+version: "3"
+
 services:
-  flask:
-    build: 
-      context: .
-      dockerfile: Dockerfile_python
-    container_name: flask_container
-    tty: true
-    volumes:
-      - ./:/usr/src/app
+  backend:
+    build: ./backend
+    image: backend
+    container_name: backend_container
+    links:
+      - mysql
     ports:
-      - "5000:5000"
-  vue:
-    build:
-      context: .
-      dockerfile: Dockerfile_node
-    image: vue_img
-    container_name: vue_container
-    tty: true
-    volumes:
-      - ./:/usr/src/app
+      - "3031:3031"
+    environment:
+      TZ: "Asia/Tokyo"
+    # volumes:
+    #   - ./backend/python:/var/www/
+
+  frontend:
+    build: ./frontend
+    image: frontend
+    container_name: frontend_container
+    links:
+      - backend
     ports:
-      - "8080:8080"
+      - "80:80"
+    environment:
+      TZ: "Asia/Tokyo"
+      
+    # volumes:
+    #   - ./web/vue/dist:/home/www/contents:ro
+
+  mysql:
+    image: mysql:5.7
+    container_name: mysql_container
+    volumes:
+      - ./mysql/work:/var/lib/mysql
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_DATABASE: root
+      MYSQL_ROOT_PASSWORD: passwd
