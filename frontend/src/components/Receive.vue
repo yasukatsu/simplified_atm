@@ -1,10 +1,9 @@
-<!-- HTMLを記述 -->
 <template>
   <div class="receive">
-    <p>口座番号と入金額を入力してください。</p>
+    <h3>口座番号と入金額を入力してください。</h3>
     <el-form style="margin: 0 150px;" :model="receiveForm" ref="receiveForm" :rules="rules">
-      <el-form-item class="input" prop="id" label="口座番号">
-        <el-input type="id" v-model="receiveForm.id" autocomplete="off"></el-input>
+      <el-form-item class="input" prop="accountId" label="口座番号">
+        <el-input type="accountId" v-model="receiveForm.accountId" autocomplete="off"></el-input>
       </el-form-item>
       <el-form-item class="input" prop="amount" label="入金額">
         <el-input type="amount" v-model.number="receiveForm.amount" autocomplete="off"></el-input>
@@ -13,6 +12,7 @@
         <el-button type="primary" @click="submitForm('receiveForm')">入金</el-button>
       </el-form-item>
     </el-form>
+    <h3>{{msg}}</h3>
   </div>
 </template>
 
@@ -24,55 +24,88 @@ export default {
   data () {
     return {
       receiveForm: {
-        id: '',
+        accountId: '',
         amount: 0
       },
       rules: {
-        id: [
+        accountId: [
           { required: true, message: '口座番号は必ず入力してください。' },
-          { pattern: /^[0-9]{5}$/, message: '数字5桁で入力してください。' }
+          { pattern: /^[0-9]{1,5}$/, message: '正しい値を入力してください。' }
         ],
         amount: [
           { required: true, message: '入金額は必ず入力してください。' },
           { type: 'number', message: '正しい数値を入力してください。' }
         ]
       },
-      responseMsg: '',
-      randomNum: 0
+      msg: ''
     }
   },
   methods: {
-    getRandom () {
-      this.randomNum = this.getRandomNum()
-    },
-    getRandomNum () {
-      const path = 'http://localhost:5000/rand'
-      axios.get(path)
-        .then(response => {
-          this.randomNum = response.data.randomNum
-        })
-        .catch(error => {
-          console.log(error)
-        })
-    },
     submitForm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert('submit!')
           const path = 'http://localhost:5000/receive'
-          axios.post(path)
+          var responseMsg
+          var totalAmount
+          axios.post(path, {
+            accountId: this.receiveForm.accountId,
+            amount: this.receiveForm.amount
+          })
             .then(response => {
-              this.responseMsg = response.data.responseMsg
+              responseMsg = response.data.responseMsg
+              totalAmount = response.data.totalAmount
+              console.log(responseMsg)
+              console.log(totalAmount)
             })
+          console.log(responseMsg)
+          // var response = await this.request()
+
+          // if (response === null) {
+          //   this.msg = '入金に失敗しました。時間をおいて再度お試しください。'
+          //   return
+          // }
+
+          // var responseMsg = response.data.responseMsg
+          // var totalAmount = response.data.totalAmount
+          // if (responseMsg === 'ok') {
+          //   this.msg = '入金に成功しました。残高は【 ' + totalAmount + '円 】です。'
+          // } else {
+          //   this.msg = '入金に失敗しました。口座番号をご確認の上再度お試しください。'
+          // }
+
+          setTimeout(() => {
+            // ここに遅らせた後に行いたい処理を書く。関数でもOK
+            console.log(responseMsg)
+            if (responseMsg === 'ok') {
+              this.msg = '入金に成功しました。残高は' + totalAmount + '円です。'
+            } else {
+              this.msg = '入金に失敗しました。口座番号をご確認の上再度お試しください。'
+            }
+          }, 1000)
         } else {
-          console.log('error submit!!')
           return false
         }
       })
     }
-  },
-  created () {
-    this.getRandom()
+    // request: async function () {
+    //   const path = 'http://localhost:5000/receive'
+    //   var res = null
+    //   await axios.post(path, {
+    //     // リクエストで送るパラメータを設定
+    //     accountId: this.receiveForm.accountId,
+    //     amount: this.receiveForm.amount
+    //   })
+    //     .then(response => {
+    //       res = response
+    //       // responseMsg = response.data.responseMsg
+    //       // totalAmount = response.data.totalAmount
+    //     })
+    //     .catch(error => {
+    //       console.log(error)
+    //     })
+    //   return res
+
+    // }
   }
 }
 </script>
