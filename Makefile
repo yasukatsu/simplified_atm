@@ -1,14 +1,13 @@
-container_up:
+up_container:
 	docker-compose build
 	docker-compose up -d
 
-# 初回起動時
-front_build_first:
+build_front:
 	docker-compose exec vue npm install --prefix ./frontend
 	docker-compose exec vue npm run build --prefix ./frontend
 
-front_build:
-	docker-compose exec vue npm run build --prefix ./frontend
-
-up:
+up_server:
 	docker-compose exec flask python backend/main.py
+
+down_container:
+	docker-compose down

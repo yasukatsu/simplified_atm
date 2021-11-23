@@ -47,6 +47,7 @@ export default {
           const path = 'http://localhost:5000/receive'
           var responseMsg
           var totalAmount
+          var errorMsg
           axios.post(path, {
             accountId: this.receiveForm.accountId,
             amount: this.receiveForm.amount
@@ -54,66 +55,22 @@ export default {
             .then(response => {
               responseMsg = response.data.responseMsg
               totalAmount = response.data.totalAmount
-              console.log(responseMsg)
-              console.log(totalAmount)
+              errorMsg = response.data.errorMsg
             })
-          console.log(responseMsg)
-          // var response = await this.request()
 
-          // if (response === null) {
-          //   this.msg = '入金に失敗しました。時間をおいて再度お試しください。'
-          //   return
-          // }
-
-          // var responseMsg = response.data.responseMsg
-          // var totalAmount = response.data.totalAmount
-          // if (responseMsg === 'ok') {
-          //   this.msg = '入金に成功しました。残高は【 ' + totalAmount + '円 】です。'
-          // } else {
-          //   this.msg = '入金に失敗しました。口座番号をご確認の上再度お試しください。'
-          // }
-
+          // レスポンス待機時間を設定
           setTimeout(() => {
-            // ここに遅らせた後に行いたい処理を書く。関数でもOK
-            console.log(responseMsg)
             if (responseMsg === 'ok') {
               this.msg = '入金に成功しました。残高は' + totalAmount + '円です。'
             } else {
-              this.msg = '入金に失敗しました。口座番号をご確認の上再度お試しください。'
+              this.msg = '入金に失敗しました。' + errorMsg
             }
-          }, 1000)
+          },500)
         } else {
           return false
         }
       })
     }
-    // request: async function () {
-    //   const path = 'http://localhost:5000/receive'
-    //   var res = null
-    //   await axios.post(path, {
-    //     // リクエストで送るパラメータを設定
-    //     accountId: this.receiveForm.accountId,
-    //     amount: this.receiveForm.amount
-    //   })
-    //     .then(response => {
-    //       res = response
-    //       // responseMsg = response.data.responseMsg
-    //       // totalAmount = response.data.totalAmount
-    //     })
-    //     .catch(error => {
-    //       console.log(error)
-    //     })
-    //   return res
-
-    // }
   }
 }
 </script>
-
-<style scoped>
-/* .receive {
-  position: absolute;
-  top: 50px;
-  left: 300px;
-} */
-</style>
