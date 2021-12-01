@@ -42,13 +42,13 @@ export default {
   },
   methods: {
     submitForm (formName) {
-      this.$refs[formName].validate((valid) => {
+      this.$refs[formName].validate(async (valid) => {
         if (valid) {
           const path = 'http://localhost:5000/receive'
           var responseMsg
           var totalAmount
           var errorMsg
-          axios.post(path, {
+          await axios.post(path, {
             accountId: this.receiveForm.accountId,
             amount: this.receiveForm.amount
           })
@@ -57,15 +57,16 @@ export default {
               totalAmount = response.data.totalAmount
               errorMsg = response.data.errorMsg
             })
+            .catch(error => {
+              console.log(error)
+              errorMsg = '誠に恐れ入りますが、少々お時間をおいて再度お試しください。'
+            })
 
-          // レスポンス待機時間を設定
-          setTimeout(() => {
-            if (responseMsg === 'ok') {
-              this.msg = '入金に成功しました。残高は' + totalAmount + '円です。'
-            } else {
-              this.msg = '入金に失敗しました。' + errorMsg
-            }
-          },500)
+          if (responseMsg === 'ok') {
+            this.msg = '入金に成功しました。残高は' + totalAmount + '円です。'
+          } else {
+            this.msg = '入金に失敗しました。' + errorMsg
+          }
         } else {
           return false
         }
